@@ -1,7 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
-const Listening = require("./modules/Listening.js")
+const List = require("./modules/Listening.js");
+const path = require("path");
+
 
 app.listen(8080, ()=>{
     console.log("App is listening on port 8080");
@@ -17,23 +19,20 @@ async function main() {
 
   
 }
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.urlencoded ({extended : true}))
 
-app.get("/test", async (req , res)=>{
-    let sample = new Listening({
-        title : "My Villa",
-        description : "By the beach",
-        price : 1200,
-        location : "Goa Calangute",
-        country: "India"
+// Index Route
+app.get("/alllist", async(req , res)=>{
+   let alldata = await List.find({});
+   res.render("listening/index.ejs" , {alldata})
 
-    })
-    await sample.save().then(()=>{
-        console.log("Data save Sucessfully")
-    }).catch((error)=>{
-        console.log(error)
+})
 
-    })
-    res.send("Testing was Sucessfully")
-
-    
+// Read Route
+app.get("/listing/:id", async (req , res)=>{
+  let {id}= req.params;
+  let show = await List.findById(id);
+  res.render("listening/show.ejs", {show})
 })
