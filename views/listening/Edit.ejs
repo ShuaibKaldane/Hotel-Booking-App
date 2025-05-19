@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WonderLust</title>
+</head>
+<body>
+    <h3>Edit Listing</h3>
+     <form method="post" action="/listing/<%=show._id %>?_method=PUT">
+        <input type="text" name="listing[title]" value="<%= show.title %>">
+        <br><br>
+        <input type="text" name="listing[description]" value="<%= show.description %>">
+        <br><br>
+        <input type="text" name="listing[url]" value="<%= show.url %>">
+        <br><br>
+        <input type="number" name="listing[price]" value="<%= show.price %>">
+        <br><br>
+        <input type="text" name="listing[location]" value="<%= show.location %>">
+        <br><br>
+        <input type="text" name="listing[country]" value="<%= show.country %>">
+        <br><br>
+        <button type="submit">Edit Listing</button>
+    </form>
+</body>
+</html>
