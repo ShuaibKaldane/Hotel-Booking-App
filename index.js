@@ -5,7 +5,7 @@ const List = require("./modules/Listening.js");
 const path = require("path");
 const Listening = require('./modules/Listening.js');
 const methodOverride = require("method-override");
-
+const ejsmate= require("ejs-mate")
 
 
 app.listen(8080, ()=>{
@@ -26,6 +26,8 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded ({extended : true}));
 app.use(methodOverride("_method"));
+app.engine('ejs', ejsmate);
+app.use(express.static(path.join(__dirname, "/public")))
 
 // Root Route
 app.get("/", (req , res)=>{
