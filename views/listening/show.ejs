@@ -1,18 +1,37 @@
 <% layout('/layouts/boilerplate.ejs') -%>
-  <body>
-    <ul>
-      <li><%= show.title %></li>
-      <li><%= show.description %></li>
-      <li>&#8377; <%= show.price.toLocaleString("en-IN") %></li>
-      <li><%= show.location %></li>
-      <li><%= show.country %></li>
-    </ul>
-    <a href="/listings/<%= show._id %>/edit">Edit Details</a>
-    <br>
-    <br>
-   <form method="POST" action="/listing/<%= show._id %>?_method=DELETE">
-  <button>Delete the Listing</button>
-</form>
+<body>
+  <div class="row   mt-3 ">
+    <div class="col-8 offset-2 ">
+      <h3>Listings Details</h3>
+      </div>
+  <div class="card col-6 offset-2 ">
+    <img
+      src="<%= show.image.url %>"
+      class="card-img-top show-img"
+      alt="image"
+    />
+    <div class="card-body">
+     <b> <p class="card-text"><%= show.title %></b>
+      <br>
+      <%= show.description %><br>
+      <%= show.price.toLocaleString("en-IN") %><br>
+      <%= show.country %><br>
+      <%= show.location %><br>
+      </p>
 
-  </body>
+    </div>
+  </div>
+    </div>
+ 
+  
+  
+      <a href="/listings/<%= show._id %>/edit" class="btn btn-primary add"
+        >Edit Details</a
+      >
+    </div>
+  </div>
 
+  <form method="POST" action="/listing/<%= show._id %>?_method=DELETE">
+    <button class="btn btn-primary add">Delete the Listing</button>
+  </form>
+</body>

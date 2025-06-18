@@ -9,7 +9,7 @@
     <b><h5 class="card-title"><%= i.title %></h5></b>
     <p class="card-text">&#8377;
 <%=i.price.toLocaleString("en-IN") %>/night</p>
-    <a href="/listing/<%=i._id %>" class="btn btn-primary">Book Now</a>
+    <a href="/listing/<%=i._id %>" class="btn btn-primary add">Book Now</a>
   </div>
 </div>
  <% } %>
@@ -17,7 +17,7 @@
     <br>
     <br>
     <form method="get" action="/listing/new">
-        <button>Create Listings</button>
+        <button class="add">Create Listings</button>
     </form>
     
 </body>
