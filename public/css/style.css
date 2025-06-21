@@ -88,3 +88,8 @@ body {
 .show-img{
     height: 30vh;
 }
+
+.show-cards{
+    padding-left: 0;
+    padding-right: 0;
+}

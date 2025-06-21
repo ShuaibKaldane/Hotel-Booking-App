@@ -1,10 +1,10 @@
 <% layout('/layouts/boilerplate.ejs') -%>
 <body>
-  <div class="row   mt-3 ">
-    <div class="col-8 offset-2 ">
+  <div class="row   mt-5 ">
+    <div class="col-8 offset-3 ">
       <h3>Listings Details</h3>
       </div>
-  <div class="card col-6 offset-2 ">
+  <div class="card col-6 offset-3  show-cards">
     <img
       src="<%= show.image.url %>"
       class="card-img-top show-img"
@@ -25,13 +25,18 @@
  
   
   
-      <a href="/listings/<%= show._id %>/edit" class="btn btn-primary add"
-        >Edit Details</a
-      >
+     <div class="col-8 offset-3 ">
+  <a href="/listings/<%= show._id %>/edit" class="btn btn-primary add me-2">
+    Edit Details
+  </a>
+  
+  <form method="POST" action="/listing/<%= show._id %>?_method=DELETE" style="display:inline;">
+    <button class="btn btn-danger add">Delete the Listing</button>
+  </form>
+</div>
+
     </div>
   </div>
 
-  <form method="POST" action="/listing/<%= show._id %>?_method=DELETE">
-    <button class="btn btn-primary add">Delete the Listing</button>
-  </form>
+  
 </body>
