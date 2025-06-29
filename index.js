@@ -7,7 +7,9 @@ const Listening = require('./modules/Listening.js');
 const methodOverride = require("method-override");
 const ejsmate= require("ejs-mate");
 const WrapAsync = require("./utils/wrapAsync.js")
-
+const ExpressError = require("./utils/ExpressError.js");
+const wrapAsync = require('./utils/wrapAsync.js');
+const {Listingschema} = require("./schema.js")
 
 app.listen(8080, ()=>{
     console.log("App is listening on port 8080");
@@ -30,6 +32,15 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsmate);
 app.use(express.static(path.join(__dirname, "/public")))
 
+const validate = (req , res , next)=>{
+  let {error}= Listingschema.validate(req.body);
+  if(error){
+    let message = error.details.map((el)=>el.message).join(",");
+    throw new ExpressError(message, 400)
+  }else{
+    next()
+  }
+}
 // Root Route
 app.get("/", (req , res)=>{
   res.send("Welcome to the home page")
@@ -48,46 +59,49 @@ app.get("/listing/new" , async(req , res)=>{
 
 })
 
-app.post("/listening/response",WrapAsync,  async (req , res , next)=>{
-  
-    console.log(req.body.listing)
+app.post("/listening/response", validate, WrapAsync  (async (req , res , next)=>{
   const listening = new Listening(req.body.listing);
   await listening.save();
   res.redirect("/alllist")
 
-})
+}))
 
 // Read Route
-app.get("/listing/:id", async (req , res)=>{
+app.get("/listing/:id", WrapAsync(async (req , res)=>{
   let {id}= req.params;
   let show = await List.findById(id);
   res.render("listening/show.ejs", {show})
-})
+}))
 
 // Update Route
-app.get("/listings/:id/edit",WrapAsync, async (req ,res)=>{
+app.get("/listings/:id/edit", wrapAsync(async (req ,res)=>{
   let {id}= req.params;
   let show = await List.findById(id);
   res.render("listening/Edit.ejs" , {show});
 
-})
+}))
 
-app.put("/listing/:id",WrapAsync, async(req , res)=>{
+app.put("/listing/:id", validate, wrapAsync(async(req , res)=>{
   let {id} = req.params;
   await Listening.findByIdAndUpdate(id , {...req.body.listing});
    res.redirect(`/listing/${id}`);
 
-})
+}))
 
 // Delete Route
-app.delete("/listing/:id", async(req , res)=>{
+app.delete("/listing/:id", wrapAsync(async(req , res)=>{
   let {id} = req.params;
   let deletedList = await Listening.findByIdAndDelete(id);
   console.log(deletedList); 
   res.redirect("/alllist")
 
+}))
+app.use( (req, res, next)=>{
+  next(new ExpressError("Page not found" , 404))
 })
 
+// 404 Error
 app.use((err , req, res, next)=>{
-  res.send("Something went wrong")
+  let {message = "Something went wrong" , status = 500} = err;
+  res.render("Error.ejs", {err})
 })
