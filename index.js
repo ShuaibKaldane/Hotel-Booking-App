@@ -5,7 +5,8 @@ const List = require("./modules/Listening.js");
 const path = require("path");
 const Listening = require('./modules/Listening.js');
 const methodOverride = require("method-override");
-const ejsmate= require("ejs-mate")
+const ejsmate= require("ejs-mate");
+const WrapAsync = require("./utils/wrapAsync.js")
 
 
 app.listen(8080, ()=>{
@@ -42,13 +43,14 @@ app.get("/alllist", async(req , res)=>{
 })
 
 // Create Route
-app.get("/listing/new" , (req , res)=>{
+app.get("/listing/new" , async(req , res)=>{
   res.render("listening/create.ejs")
 
 })
 
-app.post("/listening/response", async (req , res)=>{
-  console.log(req.body.listing)
+app.post("/listening/response",WrapAsync,  async (req , res , next)=>{
+  
+    console.log(req.body.listing)
   const listening = new Listening(req.body.listing);
   await listening.save();
   res.redirect("/alllist")
@@ -63,14 +65,14 @@ app.get("/listing/:id", async (req , res)=>{
 })
 
 // Update Route
-app.get("/listings/:id/edit", async (req ,res)=>{
+app.get("/listings/:id/edit",WrapAsync, async (req ,res)=>{
   let {id}= req.params;
   let show = await List.findById(id);
   res.render("listening/Edit.ejs" , {show});
 
 })
 
-app.put("/listing/:id", async(req , res)=>{
+app.put("/listing/:id",WrapAsync, async(req , res)=>{
   let {id} = req.params;
   await Listening.findByIdAndUpdate(id , {...req.body.listing});
    res.redirect(`/listing/${id}`);
@@ -84,4 +86,8 @@ app.delete("/listing/:id", async(req , res)=>{
   console.log(deletedList); 
   res.redirect("/alllist")
 
+})
+
+app.use((err , req, res, next)=>{
+  res.send("Something went wrong")
 })
