@@ -32,6 +32,7 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsmate);
 app.use(express.static(path.join(__dirname, "/public")))
 
+// Server Side Validation Function
 const validate = (req , res , next)=>{
   let {error}= Listingschema.validate(req.body);
   if(error){
