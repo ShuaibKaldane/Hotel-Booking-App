@@ -10,6 +10,8 @@ const WrapAsync = require("./utils/wrapAsync.js")
 const ExpressError = require("./utils/ExpressError.js");
 const wrapAsync = require('./utils/wrapAsync.js');
 const {Listingschema} = require("./schema.js")
+const Review = require("./modules/review.js")
+const {reviewSchema} = require("./schema.js")
 
 app.listen(8080, ()=>{
     console.log("App is listening on port 8080");
@@ -42,6 +44,27 @@ const validate = (req , res , next)=>{
     next()
   }
 }
+
+// Server Side Validation for Reviews
+const validateReview = (req , res , next)=>{
+  console.log("Review validation - req.body:", req.body);
+  
+  // Convert rating to number if it exists
+  if (req.body.review && req.body.review.rating) {
+    req.body.review.rating = Number(req.body.review.rating);
+    console.log("Converted rating to:", req.body.review.rating);
+  }
+  
+  let {error}= reviewSchema.validate(req.body);
+  if(error){
+    console.log("Validation error:", error.details);
+    let message = error.details.map((el)=>el.message).join(",");
+    throw new ExpressError(message, 400)
+  }else{
+    console.log("Validation passed");
+    next()
+  }
+}
 // Root Route
 app.get("/", (req , res)=>{
   res.send("Welcome to the home page")
@@ -70,7 +93,7 @@ app.post("/listening/response", validate, WrapAsync  (async (req , res , next)=>
 // Read Route
 app.get("/listing/:id", WrapAsync(async (req , res)=>{
   let {id}= req.params;
-  let show = await List.findById(id);
+  let show = await List.findById(id).populate('review');
   res.render("listening/show.ejs", {show})
 }))
 
@@ -97,6 +120,29 @@ app.delete("/listing/:id", wrapAsync(async(req , res)=>{
   res.redirect("/alllist")
 
 }))
+
+// Review Route
+// Post
+app.post("/listing/:id/reviews",validateReview , wrapAsync(async(req , res)=>{
+  let listing = await Listening.findById(req.params.id);
+  let newReview = new Review(req.body.review);
+  await newReview.save();
+  listing.review.push(newReview._id);
+  await listing.save();
+  console.log("New Review Saved");
+  console.log(req.body)
+  res.redirect(`/listing/${req.params.id}`);
+
+}))
+
+//Delete Request
+app.delete("/listing/:id/reviews/:reviewId" , wrapAsync(async (req , res)=>{
+  let {id , reviewId}= req.params;
+  await Listening.findByIdAndUpdate(id , {$pull : {review: reviewId}});
+  await Review.findByIdAndDelete(reviewId);
+  res.redirect(`/listing/${id}`)
+}))
+
 app.use( (req, res, next)=>{
   next(new ExpressError("Page not found" , 404))
 })
