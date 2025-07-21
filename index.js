@@ -30,6 +30,7 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsmate);
 app.use(express.static(path.join(__dirname, "/public")))
 
+// Routers Defined
 app.use("/", Listings)
 app.use("/listing" , Review)
 
