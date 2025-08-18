@@ -1,0 +1,6 @@
+Logic for next 7 Days from now 
+7  - Number of days - changes depending on how many days you want it 
+* 24 - Hours in a day - fixed
+*60 - minutes in an hour - fixed
+* 60- seconds in minutes - fixed
+* 1000 - milseconds - fixed

@@ -40,7 +40,8 @@ router.get("/listing/new" , async(req , res)=>{
 router.post("/listening/response", validate, WrapAsync  (async (req , res , next)=>{
   const listening = new Listening(req.body.listing);
   await listening.save();
-  res.redirect("/alllist")
+  req.flash("sucess" , "New Listing Created");
+  res.redirect("/alllist");
 
 }))
 
@@ -48,6 +49,10 @@ router.post("/listening/response", validate, WrapAsync  (async (req , res , next
 router.get("/listing/:id", WrapAsync(async (req , res)=>{
   let {id}= req.params;
   let show = await List.findById(id).populate('review');
+  if(!show){
+    req.flash("error" , "Listing not Found");
+    res.redirect("/alllist");
+  }
   res.render("listening/show.ejs", {show})
 }))
 
@@ -70,7 +75,7 @@ router.put("/listing/:id", validate, wrapAsync(async(req , res)=>{
 router.delete("/listing/:id", wrapAsync(async(req , res)=>{
   let {id} = req.params;
   let deletedList = await Listening.findByIdAndDelete(id);
-  console.log(deletedList); 
+  req.flash("sucess" , "Listing Deleted");
   res.redirect("/alllist")
 
 }))
