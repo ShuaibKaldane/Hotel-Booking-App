@@ -4,7 +4,6 @@ const List = require("../modules/Listening.js");
 const Listening = require('../modules/Listening.js');
 const ExpressError = require("../utils/ExpressError.js");
 const wrapAsync = require('../utils/wrapAsync.js');
-const {Listingschema} = require("../schema.js");
 const {reviewSchema} = require("../schema.js");
 const Review = require("../modules/review.js")
 

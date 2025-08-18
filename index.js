@@ -5,10 +5,14 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsmate= require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
-const Listings = require("./routes/listing.js")
-const Review = require("./routes/review.js");
+const ListingsRouter = require("./routes/listing.js")
+const ReviewRouter = require("./routes/review.js");
 const expressSession = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy= require("passport-local");
+const User = require("./modules/user.js");
+const UserRouter = require("./routes/user.js")
 
 app.listen(8080, ()=>{
     console.log("App is listening on port 8080");
@@ -42,6 +46,15 @@ const SessionOptions = {
 
 app.use(expressSession(SessionOptions));
 app.use(flash());
+
+// Passport JS implementation
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
 app.use((req , res , next)=>{
   res.locals.sucess = req.flash("sucess");
   res.locals.error = req.flash("error");
@@ -49,8 +62,9 @@ app.use((req , res , next)=>{
 })
 
 // Routers Defined
-app.use("/", Listings)
-app.use("/listing" , Review)
+app.use("/", ListingsRouter);
+app.use("/listing" , ReviewRouter);
+app.use("/", UserRouter);
 
 
 app.use( (req, res, next)=>{

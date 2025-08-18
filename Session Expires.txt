@@ -4,3 +4,9 @@ Logic for next 7 Days from now
 *60 - minutes in an hour - fixed
 * 60- seconds in minutes - fixed
 * 1000 - milseconds - fixed
+
+for Authentication Login and Signup 
+Passport JS
+npm install passport
+npm install passport-local
+npm install passport-mongoose
