@@ -77,6 +77,7 @@ async function addReviewsToAllListings() {
                 const newReview = new Review({
                     rating: randomReview.rating,
                     comment: randomReview.comment,
+                    author: '68a41b416550f3cb28ec7f17', // Added author ID
                     createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000) // Random date within last 30 days
                 });
 
@@ -112,4 +113,4 @@ async function addReviewsToAllListings() {
 }
 
 // Run the function
-// addReviewsToAllListings(); 
+addReviewsToAllListings();

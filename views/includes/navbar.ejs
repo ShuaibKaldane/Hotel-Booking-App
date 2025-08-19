@@ -11,6 +11,17 @@
         <a class="nav-link" href="/listing/new">Add new Listening</a>
         
       </div>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ms-auto">
+        <% if(!currUser){ %>
+        <a class="nav-link active" aria-current="page" href="/signup">Signup</a>
+        <a class="nav-link" href="/login">Sign in</a>
+        <% } %>
+        <% if(currUser){ %>
+        <a class="nav-link" href="/logout">Logout</a>
+        <% } %>
+        
+      </div>
     </div>
   </div>
 </nav>

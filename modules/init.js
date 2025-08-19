@@ -14,7 +14,8 @@ async function main() {
 
 async function database(){
     await  list.deleteMany({});
-    await list.insertMany(sample.data)
+    await list.insertMany(sample.data);
+    console.log("Data inserted Sucessfully");
 }
 
 database();

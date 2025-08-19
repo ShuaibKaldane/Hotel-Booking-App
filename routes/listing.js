@@ -7,8 +7,11 @@ const ejsmate= require("ejs-mate");
 const WrapAsync = require("../utils/wrapAsync.js")
 const ExpressError = require("../utils/ExpressError.js");
 const wrapAsync = require('../utils/wrapAsync.js');
-const {Listingschema} = require("../schema.js")
-
+const {Listingschema} = require("../schema.js");
+const passport = require("passport");
+const flash = require("connect-flash");
+const {isLogedin} = require("../middleware/auth.js")
+const {isOwner} = require("../middleware/auth.js")
 
 // Server Side Validation Function
 const validate = (req , res , next)=>{
@@ -32,13 +35,13 @@ router.get("/alllist", async(req , res)=>{
 })
 
 // Create Route
-router.get("/listing/new" , async(req , res)=>{
-  res.render("listening/create.ejs")
-
+router.get("/listing/new" ,isLogedin,  async(req , res)=>{
+  res.render("listening/create.ejs");
 })
 
-router.post("/listening/response", validate, WrapAsync  (async (req , res , next)=>{
+router.post("/listening/response",isLogedin, validate, WrapAsync  (async (req , res , next)=>{
   const listening = new Listening(req.body.listing);
+  listening.owner = req.user._id;
   await listening.save();
   req.flash("sucess" , "New Listing Created");
   res.redirect("/alllist");
@@ -48,7 +51,14 @@ router.post("/listening/response", validate, WrapAsync  (async (req , res , next
 // Read Route
 router.get("/listing/:id", WrapAsync(async (req , res)=>{
   let {id}= req.params;
-  let show = await List.findById(id).populate('review');
+  let show = await List.findById(id)
+    .populate({
+      path: 'review',
+      populate: {
+        path: 'author'
+      }
+    })
+    .populate('owner');
   if(!show){
     req.flash("error" , "Listing not Found");
     res.redirect("/alllist");
@@ -57,14 +67,14 @@ router.get("/listing/:id", WrapAsync(async (req , res)=>{
 }))
 
 // Update Route
-router.get("/listings/:id/edit", wrapAsync(async (req ,res)=>{
+router.get("/listings/:id/edit", isLogedin,  wrapAsync(async (req ,res)=>{
   let {id}= req.params;
   let show = await List.findById(id);
   res.render("listening/Edit.ejs" , {show});
 
 }))
 
-router.put("/listing/:id", validate, wrapAsync(async(req , res)=>{
+router.put("/listing/:id",isLogedin,isOwner,  validate,  wrapAsync(async(req , res)=>{
   let {id} = req.params;
   await Listening.findByIdAndUpdate(id , {...req.body.listing});
    res.redirect(`/listing/${id}`);
@@ -72,7 +82,7 @@ router.put("/listing/:id", validate, wrapAsync(async(req , res)=>{
 }))
 
 // Delete Route
-router.delete("/listing/:id", wrapAsync(async(req , res)=>{
+router.delete("/listing/:id",isLogedin, isOwner , wrapAsync(async(req , res)=>{
   let {id} = req.params;
   let deletedList = await Listening.findByIdAndDelete(id);
   req.flash("sucess" , "Listing Deleted");

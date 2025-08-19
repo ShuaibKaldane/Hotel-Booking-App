@@ -27,7 +27,11 @@ const list = new mongoose.Schema({
     country :{
         type : String
     },
-    review: [{ type: Schema.Types.ObjectId, ref: 'Review' }]
+    review: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
+
+    owner : {
+        type : Schema.Types.ObjectId, ref: 'User'
+    }
 });
 
 list.post("findOneAndDelete", async function(doc) {
