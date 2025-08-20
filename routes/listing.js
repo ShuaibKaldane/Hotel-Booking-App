@@ -2,16 +2,22 @@ const express = require("express");
 const router = express.Router();
 const List = require("../modules/Listening.js");
 const Listening = require('../modules/Listening.js');
-const methodOverride = require("method-override");
-const ejsmate= require("ejs-mate");
 const WrapAsync = require("../utils/wrapAsync.js")
 const ExpressError = require("../utils/ExpressError.js");
 const wrapAsync = require('../utils/wrapAsync.js');
 const {Listingschema} = require("../schema.js");
-const passport = require("passport");
-const flash = require("connect-flash");
-const {isLogedin} = require("../middleware/auth.js")
-const {isOwner} = require("../middleware/auth.js")
+const {isLogedin} = require("../middleware/auth.js");
+const {isOwner} = require("../middleware/auth.js");
+const {index} = require("../controllers/Listening.js");
+const {create} = require("../controllers/Listening.js");
+const {saveCreate} = require("../controllers/Listening.js");
+const {read} = require("../controllers/Listening.js");
+const {update} = require("../controllers/Listening.js");
+const {updatesave} = require("../controllers/Listening.js");
+const {destroy} = require("../controllers/Listening.js");
+const multer  = require('multer')
+const {storage} = require("../CloudConfig.js");
+const upload = multer({storage});
 
 // Server Side Validation Function
 const validate = (req , res , next)=>{
@@ -23,71 +29,34 @@ const validate = (req , res , next)=>{
     next()
   }
 }
+
 router.get("/", (req , res)=>{
   res.send("Welcome to the home page")
 })
 
+// Little optimize way of writting
 // Index Route
-router.get("/alllist", async(req , res)=>{
-   let alldata = await List.find({});
-   res.render("listening/index.ejs" , {alldata})
-
-})
+router.route("/alllist")
+.get(index);
 
 // Create Route
-router.get("/listing/new" ,isLogedin,  async(req , res)=>{
-  res.render("listening/create.ejs");
-})
+router.route("/listing/new")
+.get(isLogedin, create);
 
-router.post("/listening/response",isLogedin, validate, WrapAsync  (async (req , res , next)=>{
-  const listening = new Listening(req.body.listing);
-  listening.owner = req.user._id;
-  await listening.save();
-  req.flash("sucess" , "New Listing Created");
-  res.redirect("/alllist");
+// Normal way 
+router.post("/listening/response",isLogedin, validate,upload.single('listing[image]'), WrapAsync  (saveCreate));
 
-}))
+
 
 // Read Route
-router.get("/listing/:id", WrapAsync(async (req , res)=>{
-  let {id}= req.params;
-  let show = await List.findById(id)
-    .populate({
-      path: 'review',
-      populate: {
-        path: 'author'
-      }
-    })
-    .populate('owner');
-  if(!show){
-    req.flash("error" , "Listing not Found");
-    res.redirect("/alllist");
-  }
-  res.render("listening/show.ejs", {show})
-}))
+router.get("/listing/:id", WrapAsync(read));
 
 // Update Route
-router.get("/listings/:id/edit", isLogedin,  wrapAsync(async (req ,res)=>{
-  let {id}= req.params;
-  let show = await List.findById(id);
-  res.render("listening/Edit.ejs" , {show});
+router.get("/listings/:id/edit", isLogedin,  wrapAsync(update));
 
-}))
-
-router.put("/listing/:id",isLogedin,isOwner,  validate,  wrapAsync(async(req , res)=>{
-  let {id} = req.params;
-  await Listening.findByIdAndUpdate(id , {...req.body.listing});
-   res.redirect(`/listing/${id}`);
-
-}))
+router.put("/listing/:id",isLogedin,isOwner,  validate,  wrapAsync(updatesave));
 
 // Delete Route
-router.delete("/listing/:id",isLogedin, isOwner , wrapAsync(async(req , res)=>{
-  let {id} = req.params;
-  let deletedList = await Listening.findByIdAndDelete(id);
-  req.flash("sucess" , "Listing Deleted");
-  res.redirect("/alllist")
-
-}))
+router.delete("/listing/:id",isLogedin, isOwner , wrapAsync(destroy));
 
 module.exports = router

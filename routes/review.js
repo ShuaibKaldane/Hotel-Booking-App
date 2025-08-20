@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const List = require("../modules/Listening.js");
-const Listening = require('../modules/Listening.js');
 const ExpressError = require("../utils/ExpressError.js");
 const wrapAsync = require('../utils/wrapAsync.js');
 const {reviewSchema} = require("../schema.js");
-const Review = require("../modules/review.js");
 const {isLogedin} = require("../middleware/auth.js");
+const {create} = require("../controllers/review.js");
+const {destroy} = require("../controllers/review.js");
 
 // Server Side Validation for Reviews
 const validateReview = (req , res , next)=>{
@@ -29,27 +28,9 @@ const validateReview = (req , res , next)=>{
   }
 }
 
-router.post("/:id/reviews",validateReview , isLogedin, wrapAsync(async(req , res)=>{
-  let listing = await Listening.findById(req.params.id);
-  let newReview = new Review(req.body.review);
-  newReview.author = req.user._id;
-  await newReview.save();
-  listing.review.push(newReview._id);
-  await listing.save();
-  console.log("New Review Saved");
-  console.log(req.body);
-  req.flash("sucess" , "Review Added Sucessfully");
-  res.redirect(`/listing/${req.params.id}`);
-
-}))
+router.post("/:id/reviews",validateReview , isLogedin, wrapAsync(create));
 
 //Delete Request
-router.delete("/:id/reviews/:reviewId" ,isLogedin, wrapAsync(async (req , res)=>{
-  let {id , reviewId}= req.params;
-  await Listening.findByIdAndUpdate(id , {$pull : {review: reviewId}});
-  await Review.findByIdAndDelete(reviewId);
-  req.flash("sucess" , "Review Deleted  Sucessfully");
-  res.redirect(`/listing/${id}`)
-}))
+router.delete("/:id/reviews/:reviewId" ,isLogedin, wrapAsync(destroy))
 
 module.exports = router;

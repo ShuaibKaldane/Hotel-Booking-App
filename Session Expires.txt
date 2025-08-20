@@ -10,3 +10,6 @@ Passport JS
 npm install passport
 npm install passport-local
 npm install passport-mongoose
+
+multer - for file upload
+dotenv package - for setup for .env

@@ -1,51 +1,24 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../modules/user.js");
-const flash = require("connect-flash");
 const wrapAsync = require("../utils/wrapAsync.js");
 const passport = require("passport");
 const { saveRedirectUrl } = require("../middleware/auth.js");
+const {create} = require("../controllers/user.js");
+const {createsave} = require("../controllers/user.js");
+const {login} = require("../controllers/user.js");
+const {savelogin} = require("../controllers/user.js");
+const {logout} = require("../controllers/user.js");
 
-router.get("/signup", (req , res)=>{
-    res.render("users/signup.ejs");
+// Optimize way of writing route
+router.route("/signup")
+.get(create)
+.post(wrapAsync(createsave));
 
-})
-router.post("/signup", wrapAsync(async(req , res, next)=>{
-   try{
-     let {username , email, password} = req.body;
-    const newuser = new User({email , username});
-    const registeredUser = await User.register(newuser , password);
-    req.login(registeredUser, (err)=>{
-        if(err){
-            return next(err)
-        }
-        req.flash("sucess", "Welcome to WonderLust");
-        res.redirect("/alllist");
-    })
-   }catch(e){
-    req.flash("error", e.message);
-    res.redirect("/signup");
-   }
-    
-}))
+router.route("/login")
+.get(login)
 
-router.get("/login", (req , res)=>{
-    res.render("users/login.ejs");
-})
+router.route("/login")
+.post(saveRedirectUrl, passport.authenticate("local", {failureRedirect : "/login" , failureFlash : true}), savelogin);
 
-router.post("/login",saveRedirectUrl, passport.authenticate("local", {failureRedirect : "/login" , failureFlash : true}), async (req , res)=>{
-    req.flash("sucess", "Welcomeback to wonderlust");
-    let redirectUrl = res.locals.redirectUrl || "/alllist"; 
-    res.redirect(redirectUrl);
-});
-
-router.get("/logout", (req, res, next)=>{
-    req.logOut((err)=>{
-        if(err){
-            return next(err);
-        }
-        req.flash("sucess" , "you are logout");
-        res.redirect("/alllist")
-    })
-})
+router.get("/logout", logout)
 module.exports = router;

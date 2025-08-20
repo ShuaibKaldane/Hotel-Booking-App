@@ -7,7 +7,8 @@
         method="post"
         action="/listening/response"
         class="needs-validation"
-        novalidate
+        novalidate 
+        enctype="multipart/form-data"
       >
         <div class="mb-3">
           <label for="title" class="form-label">Title</label>
@@ -31,16 +32,15 @@
           />
           <div class="invalid-feedback">Please enter a description.</div>
         </div>
-
         <div class="mb-3">
-          <label for="image" class="form-label">Image Link</label>
+          <label for="image" class="form-label">Upload Image</label>
           <input
-            type="text"
-            name="listing[image][url]"
+            type="file"
+            name="listing[image]"
             placeholder="Enter the image Link"
             class="form-control"
           />
-          <div class="invalid-feedback">Please enter a Image.</div>
+          <div class="invalid-feedback">Please upload a Image.</div>
         </div>
 
         <div class="row">
@@ -85,4 +85,5 @@
       </form>
     </div>
   </div>
+  <br>
 </body>
