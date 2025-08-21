@@ -21,6 +21,11 @@
       </div>
     </div>
   </div>
+  <div class="row mt-4">
+  <div class="col-8 offset-2">
+    <div id="map" style="height: 400px; border-radius: 10px;"></div>
+  </div>
+</div>
  
   <% if(currUser && currUser._id.equals(show.owner._id)){ %>
     <div class="col-8 offset-3">
@@ -116,4 +121,173 @@
       });
     }
   </script>
+  <!-- Map Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      // Initialize variables from EJS
+      const location = '<%= show.location %>';
+      const country = '<%= show.country %>';
+      const title = '<%= show.title %>';
+      
+      // Initialize the map
+      const map = L.map('map').setView([20.5937, 78.9629], 5);
+      
+      // Add tile layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+      
+      // Enhanced geocoding function for exact location
+      function geocodeLocation() {
+        if (!location || !country) {
+          console.log('Missing location or country data');
+          return;
+        }
+        
+        // Try multiple search queries for better accuracy
+        const queries = [
+          `${location}, ${country}`,
+          `${location}`,
+          `${country}, ${location}`
+        ];
+        
+        let foundLocation = null;
+        let currentQueryIndex = 0;
+        
+        function searchNextQuery() {
+          if (currentQueryIndex >= queries.length) {
+            // No more queries to try, show fallback
+            showFallbackLocation();
+            return;
+          }
+          
+          const query = queries[currentQueryIndex];
+          console.log(`Searching for: ${query}`);
+          
+          const encodedQuery = encodeURIComponent(query);
+          fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedQuery}&limit=5&addressdetails=1`)
+            .then(response => {
+              if (!response.ok) {
+                console.error('Geocoding API error:', response.status);
+                currentQueryIndex++;
+                searchNextQuery();
+                return;
+              }
+              return response.json();
+            })
+            .then(data => {
+              if (!data) return;
+              
+              console.log(`Results for "${query}":`, data);
+              
+              if (data && data.length > 0) {
+                // Find the most relevant result
+                foundLocation = data.find(result => {
+                  const address = result.display_name.toLowerCase();
+                  return address.includes(location.toLowerCase()) && 
+                         address.includes(country.toLowerCase());
+                }) || data[0]; // Fallback to first result
+                
+                if (foundLocation) {
+                  console.log('Found location:', foundLocation);
+                  showLocationOnMap(foundLocation);
+                  return;
+                }
+              }
+              
+              // Try next query
+              currentQueryIndex++;
+              searchNextQuery();
+            })
+            .catch(error => {
+              console.error('Error in search:', error);
+              currentQueryIndex++;
+              searchNextQuery();
+            });
+        }
+        
+        function showLocationOnMap(foundLocation) {
+          try {
+            const lat = parseFloat(foundLocation.lat);
+            const lon = parseFloat(foundLocation.lon);
+            
+            // Validate coordinates
+            if (isNaN(lat) || isNaN(lon)) {
+              throw new Error('Invalid coordinates received');
+            }
+            
+            console.log(`Setting map to coordinates: ${lat}, ${lon}`);
+            
+            // Set map view to the exact location
+            map.setView([lat, lon], 13);
+            
+            // Create custom marker icon (optional)
+            const customIcon = L.divIcon({
+              className: 'custom-marker',
+              html: '<i class="fas fa-map-marker-alt" style="color: #dc3545; font-size: 24px;"></i>',
+              iconSize: [24, 24],
+              iconAnchor: [12, 24]
+            });
+            
+            // Add marker with detailed popup
+            const marker = L.marker([lat, lon], { icon: customIcon })
+              .addTo(map)
+              .bindPopup(`
+                <div style="text-align: center;">
+                  <h6><strong>${title}</strong></h6>
+                  <p><i class="fas fa-map-marker-alt"></i> ${location}</p>
+                  <p><i class="fas fa-globe"></i> ${country}</p>
+                  <small class="text-muted">${foundLocation.display_name}</small>
+                </div>
+              `)
+              .openPopup();
+            
+            // Add a circle to show the area
+            L.circle([lat, lon], {
+              color: '#dc3545',
+              fillColor: '#dc3545',
+              fillOpacity: 0.1,
+              radius: 200
+            }).addTo(map);
+            
+            console.log('Marker placed successfully at exact location');
+            
+          } catch (error) {
+            console.error('Error placing marker:', error);
+            showFallbackLocation();
+          }
+        }
+        
+        function showFallbackLocation() {
+          console.error('Error geocoding location: Location not found in any search');
+          
+          // Fallback: Show default location with address info
+          const fallbackMarker = L.marker([20.5937, 78.9629])
+            .addTo(map)
+            .bindPopup(`
+              <div style="text-align: center;">
+                <h6><strong>${title}</strong></h6>
+                <p><i class="fas fa-map-marker-alt"></i> ${location}, ${country}</p>
+                <p class="text-warning"><i class="fas fa-exclamation-triangle"></i> Exact location not found</p>
+                <small class="text-muted">Showing approximate location</small>
+              </div>
+            `);
+          
+          // Set view to show India (or adjust based on your target region)
+          map.setView([20.5937, 78.9629], 5);
+        }
+        
+        // Start the search
+        searchNextQuery();
+      }
+      
+      // Call geocoding function
+      geocodeLocation();
+      
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
+  });
+</script>
 </body>

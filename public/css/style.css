@@ -152,3 +152,154 @@ body {
         padding: 1rem !important;
     }
 }
+
+
+.custom-marker {
+  background: transparent;
+  border: none;
+}
+
+.leaflet-popup-content {
+  margin: 8px 12px;
+  line-height: 1.4;
+}
+
+
+.tax-info {
+    display: none;
+}
+
+.toogle{
+    padding-left: 0.7rem;
+    padding-top: 0.2rem;
+    margin-top: 0.5rem;
+    margin-left: 1rem;
+    border: 2px solid black;
+    width: 9rem;
+    border-radius: 0.9rem;
+    
+}
+
+#flexSwitchCheckDefault:hover{
+    cursor: pointer;
+}
+
+.form-check-label:hover {
+    cursor: pointer;
+}
+
+/* Or more specifically for the tax label */
+label[for="flexSwitchCheckDefault"]:hover {
+    cursor: pointer;
+}
+
+.toogle:hover{
+    cursor: pointer;
+}
+
+.form-check form-switch:hover{
+cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+
+.form-check-input:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+
+.form-check-input {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+
+.form-check-input:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+.search{
+    background-color: #fe424d ;
+    border-radius: 25px;
+    color: #e9ecef;
+    border: none;
+    padding-right: 1rem;
+    text-align: center;
+    width: 120px; /* Add this line to increase width */
+    min-width: 120px; /* Optional: ensures minimum width */
+}
+
+.search i{
+    margin-left:  0.5rem;
+    display: inline;
+}
+
+
+
+/* Search input oval styling */
+.search-form .form-control {
+    border-radius: 25px;
+    padding: 0.5rem 3rem 0.5rem 3rem;
+}
+
+/* Alternative more specific targeting */
+input[type="search"].form-control {
+    border-radius: 25px;
+}
+
+/* Autocomplete Dropdown Styles */
+.search-container {
+  position: relative;
+}
+
+.autocomplete-dropdown {
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  top: 100%;
+  left: 0;
+}
+
+.autocomplete-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.highlighted {
+  background-color: #f8f9fa;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-title {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.autocomplete-subtitle {
+  font-size: 0.85em;
+  color: #666;
+}
+
+.no-suggestions {
+  padding: 12px 16px;
+  color: #999;
+  font-style: italic;
+  text-align: center;
+}
