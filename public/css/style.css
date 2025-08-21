@@ -433,4 +433,70 @@ input[type="search"].form-control {
         font-size: 0.85rem;
     }
 }
+.add{
+    background: linear-gradient(135deg, #fe424d, #ff6b6b) !important;
+    border: 2px solid transparent !important;
+    color: white !important;
+    font-weight: 500;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(254, 66, 77, 0.3);
+    display: inline-block;
+}
+
+.add:hover {
+    background: linear-gradient(135deg, #e63946, #fe424d) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(254, 66, 77, 0.4);
+    color: white !important;
+}
+
+.add:active {
+    background: linear-gradient(135deg, #e63946, #fe424d) !important;
+    color: white !important;
+    box-shadow: 0 3px 12px rgba(254, 66, 77, 0.4);
+}
+
+.add:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(254, 66, 77, 0.2);
+}
+
+/* Ripple effect on click */
+.add::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.add:active::before {
+    width: 200px;
+    height: 200px;
+}
+
+/* Responsive adjustments for add buttons */
+@media (max-width: 768px) {
+    .add {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .add {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}
 
