@@ -7,12 +7,21 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-link active" aria-current="page" href="/alllist">Home</a>
-        <a class="nav-link" href="/alllist">All Listening</a>
-        <a class="nav-link" href="/listing/new">Add new Listening</a>
-        
+        <a class="nav-link" href="/alllist">Explore</a>
+       
       </div>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      
+      <!-- Centered Search Form -->
+      <div class="navbar-nav mx-auto d-flex align-items-center">
+        <form class="d-flex align-items-center">
+          <input class="form-control me-2 w-auto" type="search" placeholder="Search destinations..." aria-label="Search" style="min-width: 300px;">
+          <button class="search" type="submit">Search <i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+      </div>
+      
+      <!-- Right side navigation -->
       <div class="navbar-nav ms-auto">
+         <a class="nav-link" href="/listing/new">Rent your Home</a>
         <% if(!currUser){ %>
         <a class="nav-link active" aria-current="page" href="/signup">Signup</a>
         <a class="nav-link" href="/login">Sign in</a>
@@ -20,7 +29,6 @@
         <% if(currUser){ %>
         <a class="nav-link" href="/logout">Logout</a>
         <% } %>
-        
       </div>
     </div>
   </div>
