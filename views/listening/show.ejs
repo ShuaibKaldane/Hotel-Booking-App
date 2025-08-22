@@ -14,7 +14,7 @@
         <br>
         <p><b>Property Owner Name : <%= show.owner.username %></b></p>
         <%= show.description %><br>
-        <%= show.price.toLocaleString("en-IN") %><br>
+        ₹<%= show.price.toLocaleString("en-IN") %>/night<br>
         <%= show.country %><br>
         <%= show.location %><br>
         </p>
@@ -22,8 +22,134 @@
     </div>
   </div>
   <div class="d-flex justify-content-center align-items-center">
-  <button class="btn btn-primary add">Book now</button>
-</div>
+    <% if(currUser && !show.owner._id.equals(currUser._id)){ %>
+      <button class="btn btn-primary add" data-bs-toggle="modal" data-bs-target="#bookingModal">Book now</button>
+    <% } else if(!currUser) { %>
+      <a href="/login" class="btn btn-primary add">Login to Book</a>
+    <% } %>
+  </div>
+
+  <!-- Booking Modal -->
+  <% if(currUser && !show.owner._id.equals(currUser._id)){ %>
+  <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bookingModalLabel">Book Your Stay</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="bookingForm" method="POST" action="/listing/<%= show._id %>/book" class="needs-validation" novalidate>
+            <input type="hidden" id="pricePerNight" value="<%= show.price %>">
+            
+            <div class="mb-3">
+              <label for="fullName" class="form-label">Full Name</label>
+              <input
+                type="text"
+                name="booking[fullName]"
+                id="fullName"
+                placeholder="Enter your full name"
+                class="form-control"
+                required
+              />
+              <div class="invalid-feedback">Please enter your full name.</div>
+            </div>
+            
+            <div class="row">
+              <div class="mb-3 col-md-6">
+                <label for="numberOfRooms" class="form-label">Number of Rooms</label>
+                <input
+                  type="number"
+                  name="booking[numberOfRooms]"
+                  id="numberOfRooms"
+                  min="1"
+                  max="10"
+                  value="1"
+                  class="form-control"
+                  required
+                />
+                <div class="invalid-feedback">Please enter number of rooms (1-10).</div>
+              </div>
+              
+              <div class="mb-3 col-md-6">
+                <label for="numberOfGuests" class="form-label">Number of Guests</label>
+                <input
+                  type="number"
+                  name="booking[numberOfGuests]"
+                  id="numberOfGuests"
+                  min="1"
+                  max="20"
+                  value="1"
+                  class="form-control"
+                  required
+                />
+                <div class="invalid-feedback">Please enter number of guests (1-20).</div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="mb-3 col-md-6">
+                <label for="checkInDate" class="form-label">Check-in Date</label>
+                <input
+                  type="date"
+                  name="booking[checkInDate]"
+                  id="checkInDate"
+                  class="form-control"
+                  required
+                />
+                <div class="invalid-feedback">Please select a check-in date.</div>
+              </div>
+              
+              <div class="mb-3 col-md-6">
+                <label for="checkOutDate" class="form-label">Check-out Date</label>
+                <input
+                  type="date"
+                  name="booking[checkOutDate]"
+                  id="checkOutDate"
+                  class="form-control"
+                  required
+                />
+                <div class="invalid-feedback">Please select a check-out date.</div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="paymentMode" class="form-label">Payment Mode</label>
+              <input
+                type="text"
+                name="booking[paymentMode]"
+                id="paymentMode"
+                value="Cash"
+                class="form-control"
+                readonly
+                disabled
+              />
+              <input type="hidden" name="booking[paymentMode]" value="Cash">
+            </div>
+            
+            <div class="mb-3">
+              <label for="totalAmount" class="form-label">Total Amount</label>
+              <input
+                type="number"
+                name="booking[totalAmount]"
+                id="totalAmount"
+                class="form-control"
+                readonly
+                required
+              />
+              <div id="totalDisplay" class="form-text">Select dates to calculate total</div>
+            </div>
+            
+            <div class="modal-footer d-flex justify-content-end align-items-center">
+              <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-dark add">Confirm your stay</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% } %>
 
   <div class="row mt-4">
   <div class="col-8 offset-2">
@@ -43,35 +169,33 @@
     </div>
   <% } %>
   <% if(currUser && !show.owner._id.equals(currUser._id)){ %>
-    
-      <hr>
-      <h4 class="text-center">Leave a Review</h4>
-      <form action="/listing/<%= show._id %>/reviews" method="post" class="needs-validation" novalidate>
-        <div class="col-8 ms-5">
-          <fieldset class="starability-slot">
-            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
-            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-            <label for="first-rate1" title="Terrible">1 star</label>
-            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-            <label for="first-rate2" title="Not good">2 stars</label>
-            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-            <label for="first-rate3" title="Average">3 stars</label>
-            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-            <label for="first-rate4" title="Very good">4 stars</label>
-            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-            <label for="first-rate5" title="Amazing">5 stars</label>
-          </fieldset>
+    <hr>
+    <h4 class="text-center">Leave a Review</h4>
+    <form action="/listing/<%= show._id %>/reviews" method="post" class="needs-validation" novalidate>
+      <div class="col-8 ms-5">
+        <fieldset class="starability-slot">
+          <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+          <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+          <label for="first-rate1" title="Terrible">1 star</label>
+          <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+          <label for="first-rate2" title="Not good">2 stars</label>
+          <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+          <label for="first-rate3" title="Average">3 stars</label>
+          <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+          <label for="first-rate4" title="Very good">4 stars</label>
+          <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+          <label for="first-rate5" title="Amazing">5 stars</label>
+        </fieldset>
+      </div>
+      <div class="mb-3 ms-5 mx-auto">
+        <label for="comment" class="form-label">Comment</label>
+        <textarea name="review[comment]" id="comment" cols="10" rows="3" class="form-control w-50" required placeholder="Enter your Experience"></textarea>
+        <div class="invalid-feedback">
+          Please enter your valuable Experience
         </div>
-        <div class="mb-3 ms-5 mx-auto">
-          <label for="comment" class="form-label">Comment</label>
-          <textarea name="review[comment]" id="comment" cols="10" rows="3" class="form-control w-50" required placeholder="Enter your Experience"></textarea>
-          <div class="invalid-feedback">
-            Please enter your valuable Experience
-          </div>
-        </div>
-        <button class="btn btn-outline-dark ms-5">Submit</button>
-      </form>
-    </div>
+      </div>
+      <button class="btn btn-outline-dark ms-5">Submit</button>
+    </form>
   <% } %>
   
   <hr>
@@ -125,173 +249,174 @@
       });
     }
   </script>
+  
   <!-- Map Script -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    try {
-      // Initialize variables from EJS
-      const location = '<%= show.location %>';
-      const country = '<%= show.country %>';
-      const title = '<%= show.title %>';
-      
-      // Initialize the map
-      const map = L.map('map').setView([20.5937, 78.9629], 5);
-      
-      // Add tile layer
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(map);
-      
-      // Enhanced geocoding function for exact location
-      function geocodeLocation() {
-        if (!location || !country) {
-          console.log('Missing location or country data');
-          return;
-        }
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        // Initialize variables from EJS
+        const location = '<%= show.location %>';
+        const country = '<%= show.country %>';
+        const title = '<%= show.title %>';
         
-        // Try multiple search queries for better accuracy
-        const queries = [
-          `${location}, ${country}`,
-          `${location}`,
-          `${country}, ${location}`
-        ];
+        // Initialize the map
+        const map = L.map('map').setView([20.5937, 78.9629], 5);
         
-        let foundLocation = null;
-        let currentQueryIndex = 0;
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
         
-        function searchNextQuery() {
-          if (currentQueryIndex >= queries.length) {
-            // No more queries to try, show fallback
-            showFallbackLocation();
+        // Enhanced geocoding function for exact location
+        function geocodeLocation() {
+          if (!location || !country) {
+            console.log('Missing location or country data');
             return;
           }
           
-          const query = queries[currentQueryIndex];
-          console.log(`Searching for: ${query}`);
+          // Try multiple search queries for better accuracy
+          const queries = [
+            `${location}, ${country}`,
+            `${location}`,
+            `${country}, ${location}`
+          ];
           
-          const encodedQuery = encodeURIComponent(query);
-          fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedQuery}&limit=5&addressdetails=1`)
-            .then(response => {
-              if (!response.ok) {
-                console.error('Geocoding API error:', response.status);
-                currentQueryIndex++;
-                searchNextQuery();
-                return;
-              }
-              return response.json();
-            })
-            .then(data => {
-              if (!data) return;
-              
-              console.log(`Results for "${query}":`, data);
-              
-              if (data && data.length > 0) {
-                // Find the most relevant result
-                foundLocation = data.find(result => {
-                  const address = result.display_name.toLowerCase();
-                  return address.includes(location.toLowerCase()) && 
-                         address.includes(country.toLowerCase());
-                }) || data[0]; // Fallback to first result
-                
-                if (foundLocation) {
-                  console.log('Found location:', foundLocation);
-                  showLocationOnMap(foundLocation);
-                  return;
-                }
-              }
-              
-              // Try next query
-              currentQueryIndex++;
-              searchNextQuery();
-            })
-            .catch(error => {
-              console.error('Error in search:', error);
-              currentQueryIndex++;
-              searchNextQuery();
-            });
-        }
-        
-        function showLocationOnMap(foundLocation) {
-          try {
-            const lat = parseFloat(foundLocation.lat);
-            const lon = parseFloat(foundLocation.lon);
-            
-            // Validate coordinates
-            if (isNaN(lat) || isNaN(lon)) {
-              throw new Error('Invalid coordinates received');
+          let foundLocation = null;
+          let currentQueryIndex = 0;
+          
+          function searchNextQuery() {
+            if (currentQueryIndex >= queries.length) {
+              // No more queries to try, show fallback
+              showFallbackLocation();
+              return;
             }
             
-            console.log(`Setting map to coordinates: ${lat}, ${lon}`);
+            const query = queries[currentQueryIndex];
+            console.log(`Searching for: ${query}`);
             
-            // Set map view to the exact location
-            map.setView([lat, lon], 13);
+            const encodedQuery = encodeURIComponent(query);
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedQuery}&limit=5&addressdetails=1`)
+              .then(response => {
+                if (!response.ok) {
+                  console.error('Geocoding API error:', response.status);
+                  currentQueryIndex++;
+                  searchNextQuery();
+                  return;
+                }
+                return response.json();
+              })
+              .then(data => {
+                if (!data) return;
+                
+                console.log(`Results for "${query}":`, data);
+                
+                if (data && data.length > 0) {
+                  // Find the most relevant result
+                  foundLocation = data.find(result => {
+                    const address = result.display_name.toLowerCase();
+                    return address.includes(location.toLowerCase()) && 
+                           address.includes(country.toLowerCase());
+                  }) || data[0]; // Fallback to first result
+                  
+                  if (foundLocation) {
+                    console.log('Found location:', foundLocation);
+                    showLocationOnMap(foundLocation);
+                    return;
+                  }
+                }
+                
+                // Try next query
+                currentQueryIndex++;
+                searchNextQuery();
+              })
+              .catch(error => {
+                console.error('Error in search:', error);
+                currentQueryIndex++;
+                searchNextQuery();
+              });
+          }
+          
+          function showLocationOnMap(foundLocation) {
+            try {
+              const lat = parseFloat(foundLocation.lat);
+              const lon = parseFloat(foundLocation.lon);
+              
+              // Validate coordinates
+              if (isNaN(lat) || isNaN(lon)) {
+                throw new Error('Invalid coordinates received');
+              }
+              
+              console.log(`Setting map to coordinates: ${lat}, ${lon}`);
+              
+              // Set map view to the exact location
+              map.setView([lat, lon], 13);
+              
+              // Create custom marker icon (optional)
+              const customIcon = L.divIcon({
+                className: 'custom-marker',
+                html: '<i class="fas fa-map-marker-alt" style="color: #dc3545; font-size: 24px;"></i>',
+                iconSize: [24, 24],
+                iconAnchor: [12, 24]
+              });
+              
+              // Add marker with detailed popup
+              const marker = L.marker([lat, lon], { icon: customIcon })
+                .addTo(map)
+                .bindPopup(`
+                  <div style="text-align: center;">
+                    <h6><strong>${title}</strong></h6>
+                    <p><i class="fas fa-map-marker-alt"></i> ${location}</p>
+                    <p><i class="fas fa-globe"></i> ${country}</p>
+                    <small class="text-muted">${foundLocation.display_name}</small>
+                  </div>
+                `)
+                .openPopup();
+              
+              // Add a circle to show the area
+              L.circle([lat, lon], {
+                color: '#dc3545',
+                fillColor: '#dc3545',
+                fillOpacity: 0.1,
+                radius: 200
+              }).addTo(map);
+              
+              console.log('Marker placed successfully at exact location');
+              
+            } catch (error) {
+              console.error('Error placing marker:', error);
+              showFallbackLocation();
+            }
+          }
+          
+          function showFallbackLocation() {
+            console.error('Error geocoding location: Location not found in any search');
             
-            // Create custom marker icon (optional)
-            const customIcon = L.divIcon({
-              className: 'custom-marker',
-              html: '<i class="fas fa-map-marker-alt" style="color: #dc3545; font-size: 24px;"></i>',
-              iconSize: [24, 24],
-              iconAnchor: [12, 24]
-            });
-            
-            // Add marker with detailed popup
-            const marker = L.marker([lat, lon], { icon: customIcon })
+            // Fallback: Show default location with address info
+            const fallbackMarker = L.marker([20.5937, 78.9629])
               .addTo(map)
               .bindPopup(`
                 <div style="text-align: center;">
                   <h6><strong>${title}</strong></h6>
-                  <p><i class="fas fa-map-marker-alt"></i> ${location}</p>
-                  <p><i class="fas fa-globe"></i> ${country}</p>
-                  <small class="text-muted">${foundLocation.display_name}</small>
+                  <p><i class="fas fa-map-marker-alt"></i> ${location}, ${country}</p>
+                  <p class="text-warning"><i class="fas fa-exclamation-triangle"></i> Exact location not found</p>
+                  <small class="text-muted">Showing approximate location</small>
                 </div>
-              `)
-              .openPopup();
+              `);
             
-            // Add a circle to show the area
-            L.circle([lat, lon], {
-              color: '#dc3545',
-              fillColor: '#dc3545',
-              fillOpacity: 0.1,
-              radius: 200
-            }).addTo(map);
-            
-            console.log('Marker placed successfully at exact location');
-            
-          } catch (error) {
-            console.error('Error placing marker:', error);
-            showFallbackLocation();
+            // Set view to show India (or adjust based on your target region)
+            map.setView([20.5937, 78.9629], 5);
           }
+          
+          // Start the search
+          searchNextQuery();
         }
         
-        function showFallbackLocation() {
-          console.error('Error geocoding location: Location not found in any search');
-          
-          // Fallback: Show default location with address info
-          const fallbackMarker = L.marker([20.5937, 78.9629])
-            .addTo(map)
-            .bindPopup(`
-              <div style="text-align: center;">
-                <h6><strong>${title}</strong></h6>
-                <p><i class="fas fa-map-marker-alt"></i> ${location}, ${country}</p>
-                <p class="text-warning"><i class="fas fa-exclamation-triangle"></i> Exact location not found</p>
-                <small class="text-muted">Showing approximate location</small>
-              </div>
-            `);
-          
-          // Set view to show India (or adjust based on your target region)
-          map.setView([20.5937, 78.9629], 5);
-        }
+        // Call geocoding function
+        geocodeLocation();
         
-        // Start the search
-        searchNextQuery();
+      } catch (error) {
+        console.error('Error initializing map:', error);
       }
-      
-      // Call geocoding function
-      geocodeLocation();
-      
-    } catch (error) {
-      console.error('Error initializing map:', error);
-    }
-  });
-</script>
+    });
+  </script>
 </body>

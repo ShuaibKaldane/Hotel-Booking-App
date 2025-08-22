@@ -1,28 +1,25 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
+const express = require("express");
 const app = express();
+const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
-const ejsmate= require("ejs-mate");
+const ejsmate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
-const ListingsRouter = require("./routes/listing.js")
-const ReviewRouter = require("./routes/review.js");
 const expressSession = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
-const LocalStrategy= require("passport-local");
+const LocalStrategy = require("passport-local");
 const User = require("./modules/user.js");
-const UserRouter = require("./routes/user.js")
 
-app.listen(8080, ()=>{
-    console.log("App is listening on port 8080");
-})
+// Import Routers
+const ListingsRouter = require("./routes/listing.js");
+const ReviewRouter = require("./routes/review.js");
+const UserRouter = require("./routes/user.js");
+const BookingRouter = require("./routes/booking.js");
 
-main().then(()=>{
-    console.log("Database connected sucessfully")
-})
-.catch(err => console.log(err));
+const port = 8080;
+
+main().catch(err => console.log(err));
 
 async function main() {
   await mongoose.connect('mongodb://127.0.0.1:27017/wonderlust');
@@ -67,6 +64,7 @@ app.use((req , res , next)=>{
 app.use("/", ListingsRouter);
 app.use("/listing" , ReviewRouter);
 app.use("/", UserRouter);
+app.use("/", BookingRouter);
 
 
 app.use( (req, res, next)=>{
@@ -77,4 +75,8 @@ app.use( (req, res, next)=>{
 app.use((err , req, res, next)=>{
   let {message = "Something went wrong" , status = 500} = err;
   res.render("Error.ejs", {err})
+})
+
+app.listen(port, ()=>{
+  console.log(`Server is listening on port ${port}`);
 })

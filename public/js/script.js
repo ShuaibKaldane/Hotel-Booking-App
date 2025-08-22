@@ -235,3 +235,99 @@
       new AutoSuggestion(searchInput, suggestionsDropdown);
     }
   });
+
+  // Booking form functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const bookNowBtn = document.querySelector('.btn.btn-primary.add');
+    const bookingModal = document.getElementById('bookingModal');
+    const bookingForm = document.getElementById('bookingForm');
+    const checkInInput = document.getElementById('checkInDate');
+    const checkOutInput = document.getElementById('checkOutDate');
+    const numberOfRoomsInput = document.getElementById('numberOfRooms');
+    const totalAmountInput = document.getElementById('totalAmount');
+    const pricePerNight = parseFloat(document.getElementById('pricePerNight')?.value || 0);
+    
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    if (checkInInput) checkInInput.min = today;
+    if (checkOutInput) checkOutInput.min = today;
+    
+    // Show booking modal when Book now button is clicked
+    if (bookNowBtn && bookingModal) {
+      bookNowBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const modal = new bootstrap.Modal(bookingModal);
+        modal.show();
+      });
+    }
+    
+    // Calculate total amount when dates or rooms change
+    function calculateTotal() {
+      const checkIn = new Date(checkInInput.value);
+      const checkOut = new Date(checkOutInput.value);
+      const rooms = parseInt(numberOfRoomsInput.value) || 1;
+      
+      if (checkIn && checkOut && checkOut > checkIn) {
+        const timeDiff = checkOut - checkIn;
+        const nights = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        const total = pricePerNight * nights * rooms;
+        
+        if (totalAmountInput) {
+          totalAmountInput.value = total;
+        }
+        
+        // Update display
+        const totalDisplay = document.getElementById('totalDisplay');
+        if (totalDisplay) {
+          totalDisplay.textContent = `₹${total.toLocaleString('en-IN')} (${nights} nights × ${rooms} room(s))`;
+        }
+      }
+    }
+    
+    // Add event listeners for calculation
+    if (checkInInput) {
+      checkInInput.addEventListener('change', function() {
+        // Update checkout minimum date
+        const checkInDate = new Date(this.value);
+        checkInDate.setDate(checkInDate.getDate() + 1);
+        if (checkOutInput) {
+          checkOutInput.min = checkInDate.toISOString().split('T')[0];
+        }
+        calculateTotal();
+      });
+    }
+    
+    if (checkOutInput) {
+      checkOutInput.addEventListener('change', calculateTotal);
+    }
+    
+    if (numberOfRoomsInput) {
+      numberOfRoomsInput.addEventListener('change', calculateTotal);
+    }
+    
+    // Form validation
+    if (bookingForm) {
+      bookingForm.addEventListener('submit', function(e) {
+        const checkIn = new Date(checkInInput.value);
+        const checkOut = new Date(checkOutInput.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        // Validate dates
+        if (checkIn < today) {
+          e.preventDefault();
+          alert('Check-in date cannot be in the past');
+          return;
+        }
+        
+        if (checkOut <= checkIn) {
+          e.preventDefault();
+          alert('Check-out date must be after check-in date');
+          return;
+        }
+        
+        // Calculate and set total amount before submission
+        calculateTotal();
+      });
+    }
+  });
