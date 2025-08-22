@@ -5,8 +5,8 @@ module.exports.create = (req , res)=>{
 
 }
 
-module.exports.createsave = async(req , res, next)=>{
-   try{
+module.exports.createsave = async(req , res, next)=>{  
+    try{
      let {username , email, password} = req.body;
     const newuser = new User({email , username});
     const registeredUser = await User.register(newuser , password);
@@ -14,7 +14,7 @@ module.exports.createsave = async(req , res, next)=>{
         if(err){
             return next(err)
         }
-        req.flash("sucess", "Welcome to WonderLust");
+        req.flash("success", "Welcome to WonderLust");
         res.redirect("/alllist");
     })
    }catch(e){
@@ -29,7 +29,7 @@ module.exports.login = (req , res)=>{
 }
 
 module.exports.savelogin = async (req , res)=>{
-    req.flash("sucess", "Welcomeback to wonderlust");
+    req.flash("success", "Welcome back to WonderLust");
     let redirectUrl = res.locals.redirectUrl || "/alllist"; 
     res.redirect(redirectUrl);
 }

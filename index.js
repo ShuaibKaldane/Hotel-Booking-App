@@ -11,6 +11,7 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./modules/user.js");
+const MongoStore = require('connect-mongo');
 
 // Import Routers
 const ListingsRouter = require("./routes/listing.js");
@@ -23,7 +24,7 @@ const port = 8080;
 main().catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/wonderlust');
+  await mongoose.connect(process.env.ATLASDB_URL);
 
   
 }
@@ -34,14 +35,28 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsmate);
 app.use(express.static(path.join(__dirname, "/public")));
 
+const store =  MongoStore.create({
+   mongoUrl: process.env.ATLASDB_URL,
+   crypto:{
+    secret : process.env.SECRET
+   },
+   touchAfter : 24*3600
+   
+})
+store.on("error", ()=>{
+  console.log("Error in Mongodb Session Store ")
+})
+
 const SessionOptions = {
-  secret : "breakup" , resave : false, saveUninitialized : true,
+  store,
+  secret : process.env.SECRET , resave : false, saveUninitialized : true,
   cookie : {
     expires : Date.now()+ 7 * 24*60* 60* 1000,
     maxAge : 7 * 24*60* 60* 1000,
     httpOnly : true
   }
 }
+
 
 app.use(expressSession(SessionOptions));
 app.use(flash());
