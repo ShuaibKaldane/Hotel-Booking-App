@@ -4,7 +4,7 @@ const wrapAsync = require('../utils/wrapAsync.js');
 const ExpressError = require('../utils/ExpressError.js');
 const { bookingSchema } = require('../schema.js');
 const { isLogedin } = require('../middleware/auth.js');
-const { create, getUserBookings, cancel } = require('../controllers/booking.js');
+const { create, getUserBookings, cancel, viewBookingDetails } = require('../controllers/booking.js');
 
 // Server-side validation for bookings
 const validateBooking = (req, res, next) => {
@@ -42,5 +42,8 @@ router.get('/bookings', isLogedin, wrapAsync(getUserBookings));
 
 // Cancel booking
 router.put('/bookings/:bookingId/cancel', isLogedin, wrapAsync(cancel));
+
+// View booking details for property owners
+router.get('/listing/:listingId/bookings', isLogedin , wrapAsync(viewBookingDetails));
 
 module.exports = router;

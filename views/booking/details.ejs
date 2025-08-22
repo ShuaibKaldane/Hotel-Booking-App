@@ -1,0 +1,149 @@
+<% layout ("/layouts/boilerplate.ejs") %>
+<body>
+  <div class="row mt-3">
+    <div class="col-8 offset-2">
+      <h3><%= title %></h3>
+      
+      <% if(bookings && bookings.length > 0) { %>
+        <% bookings.forEach(function(booking, index) { %>
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Booking #<%= index + 1 %> - <%= booking.createdAt.toLocaleDateString() %></h5>
+            </div>
+            <div class="card-body">
+              <form class="needs-validation" novalidate>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="fullName_<%= index %>" class="form-label">Guest Full Name</label>
+                      <input
+                        type="text"
+                        id="fullName_<%= index %>"
+                        class="form-control"
+                        value="<%= booking.fullName %>"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="guestEmail_<%= index %>" class="form-label">Guest Email</label>
+                      <input
+                        type="email"
+                        id="guestEmail_<%= index %>"
+                        class="form-control"
+                        value="<%= booking.user.email %>"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="numberOfRooms_<%= index %>" class="form-label">Number of Rooms</label>
+                      <input
+                        type="number"
+                        id="numberOfRooms_<%= index %>"
+                        class="form-control"
+                        value="<%= booking.numberOfRooms %>"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="numberOfGuests_<%= index %>" class="form-label">Number of Guests</label>
+                      <input
+                        type="number"
+                        id="numberOfGuests_<%= index %>"
+                        class="form-control"
+                        value="<%= booking.numberOfGuests %>"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="checkInDate_<%= index %>" class="form-label">Check-in Date</label>
+                      <input
+                        type="date"
+                        id="checkInDate_<%= index %>"
+                        class="form-control"
+                        value="<%= booking.checkInDate.toISOString().split('T')[0] %>"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="checkOutDate_<%= index %>" class="form-label">Check-out Date</label>
+                      <input
+                        type="date"
+                        id="checkOutDate_<%= index %>"
+                        class="form-control"
+                        value="<%= booking.checkOutDate.toISOString().split('T')[0] %>"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="paymentMode_<%= index %>" class="form-label">Payment Method</label>
+                      <input
+                        type="text"
+                        id="paymentMode_<%= index %>"
+                        class="form-control"
+                        value="<%= booking.paymentMode %>"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="totalAmount_<%= index %>" class="form-label">Total Payment Amount</label>
+                      <input
+                        type="text"
+                        id="totalAmount_<%= index %>"
+                        class="form-control"
+                        value="₹<%= booking.totalAmount.toLocaleString() %>"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="bookingStatus_<%= index %>" class="form-label">Booking Status</label>
+                  <input
+                    type="text"
+                    id="bookingStatus_<%= index %>"
+                    class="form-control"
+                    value="<%= booking.status || 'Confirmed' %>"
+                    readonly
+                  />
+                </div>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="alert alert-info" role="alert">
+          <h4 class="alert-heading">No Bookings Found</h4>
+          <p>There are currently no confirmed bookings for this property.</p>
+        </div>
+      <% } %>
+      
+      <div class="mt-4">
+        <a href="/listing/<%= listing._id %>" class="btn btn-secondary">Back to Listing</a>
+      </div>
+    </div>
+  </div>
+</body>

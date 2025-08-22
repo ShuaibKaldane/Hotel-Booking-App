@@ -168,7 +168,15 @@
       </form>
     </div>
   <% } %>
-  <% if(currUser && !show.owner._id.equals(currUser._id)){ %>
+  <% if(currUser && show.owner && currUser._id.equals(show.owner._id)) { %>
+    <div class="btns">
+      <a href="/listing/<%= show._id %>/edit" class="btn btn-dark add mt-3 me-3">Edit</a>
+      <form method="POST" action="/listing/<%= show._id %>?_method=DELETE" class="d-inline">
+        <button class="btn btn-dark add mt-3">Delete</button>
+      </form>
+      <a href="/listing/<%= show._id %>/bookings" class="btn btn-primary add mt-3 ms-3">View Booking Details</a>
+    </div>
+  <% } else { %>
     <hr>
     <h4 class="text-center">Leave a Review</h4>
     <form action="/listing/<%= show._id %>/reviews" method="post" class="needs-validation" novalidate>

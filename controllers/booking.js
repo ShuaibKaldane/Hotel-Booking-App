@@ -136,3 +136,38 @@ module.exports.cancel = async (req, res) => {
         throw error;
     }
 };
+
+// View booking details for property owners
+module.exports.viewBookingDetails = async (req, res) => {
+    try {
+        const { listingId } = req.params;
+        
+        // Find the listing and verify ownership
+        const listing = await Listening.findById(listingId);
+        if (!listing) {
+            throw new ExpressError('Listing not found', 404);
+        }
+        
+        if (!listing.owner.equals(req.user._id)) {
+            throw new ExpressError('Unauthorized to view booking details', 403);
+        }
+        
+        // Get all bookings for this listing
+        const bookings = await Booking.find({ 
+            listing: listingId,
+            status: { $ne: 'cancelled' }
+        })
+        .populate('user', 'username email')
+        .populate('listing', 'title price')
+        .sort({ createdAt: -1 });
+        
+        res.render('booking/details.ejs', { 
+            bookings, 
+            listing,
+            title: `Booking Details - ${listing.title}`
+        });
+        
+    } catch (error) {
+        throw error;
+    }
+};
