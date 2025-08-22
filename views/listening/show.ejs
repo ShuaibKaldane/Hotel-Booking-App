@@ -158,22 +158,20 @@
 </div>
  
   <% if(currUser && currUser._id.equals(show.owner._id)){ %>
-    <div class="col-8 offset-3">
-      <a href="/listings/<%= show._id %>/edit" class="btn btn-primary add me-2">
-        Edit Details
-      </a>
-      
-      <form method="POST" action="/listing/<%= show._id %>?_method=DELETE" style="display:inline;">
-        <button class="btn btn-danger add">Delete the Listing</button>
-      </form>
+    <div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-4 mb-4">
+      <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
+        <a href="/listings/<%= show._id %>/edit" class="btn btn-primary add">
+          Edit Listings
+        </a>
+        
+        <form method="POST" action="/listing/<%= show._id %>?_method=DELETE" class="mb-0">
+          <button class="btn btn-danger add">Delete the Listing</button>
+        </form>
+      </div>
     </div>
   <% } %>
   <% if(currUser && show.owner && currUser._id.equals(show.owner._id)) { %>
     <div class="btns">
-      <a href="/listing/<%= show._id %>/edit" class="btn btn-dark add mt-3 me-3">Edit</a>
-      <form method="POST" action="/listing/<%= show._id %>?_method=DELETE" class="d-inline">
-        <button class="btn btn-dark add mt-3">Delete</button>
-      </form>
       <a href="/listing/<%= show._id %>/bookings" class="btn btn-primary add mt-3 ms-3">View Booking Details</a>
     </div>
   <% } else { %>

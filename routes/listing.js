@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const List = require("../modules/Listening.js");
-const Listening = require('../modules/Listening.js');
+const Listening = require('../modules/Listening.js'); // Remove duplicate List import
 const WrapAsync = require("../utils/wrapAsync.js")
 const ExpressError = require("../utils/ExpressError.js");
 const wrapAsync = require('../utils/wrapAsync.js');
@@ -54,7 +53,7 @@ router.get("/listing/:id", WrapAsync(read));
 // Update Route
 router.get("/listings/:id/edit", isLogedin,  wrapAsync(update));
 
-router.put("/listing/:id",isLogedin,isOwner,  validate,  wrapAsync(updatesave));
+router.put("/listing/:id",isLogedin,isOwner,  upload.single('listing[image]'), validate,  wrapAsync(updatesave));
 
 // Delete Route
 router.delete("/listing/:id",isLogedin, isOwner , wrapAsync(destroy));

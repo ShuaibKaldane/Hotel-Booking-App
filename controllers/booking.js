@@ -70,7 +70,7 @@ module.exports.create = async (req, res) => {
         
         // Calculate total amount
         const nights = calculateNights(checkInDate, checkOutDate);
-        const calculatedTotal = listing.price * nights;
+        const calculatedTotal = listing.price * nights * booking.numberOfRooms;
         
         // Verify the total amount matches calculation
         if (Math.abs(booking.totalAmount - calculatedTotal) > 0.01) {
@@ -87,8 +87,8 @@ module.exports.create = async (req, res) => {
         });
         
         await newBooking.save();
-        
-        req.flash('sucess', 'Booking confirmed successfully!');
+
+        req.flash('success', 'Booking done successfully! Enjoy your stay');
         res.redirect(`/listing/${id}`);
         
     } catch (error) {

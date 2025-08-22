@@ -5,7 +5,7 @@ module.exports.Listingschema = Joi.object({
         description : Joi.string().required(),
         location: Joi.string().required(),
         country: Joi.string().required(),
-        price: Joi.string().required(),
+        price: Joi.number().required().min(0), // Changed from string to number
         image: Joi.object({
             url: Joi.string().allow("", null),
             filename: Joi.string().allow("", null)
@@ -27,7 +27,7 @@ module.exports.bookingSchema = Joi.object({
         fullName: Joi.string().required().trim().min(2).max(50),
         numberOfRooms: Joi.number().required().min(1).max(10),
         numberOfGuests: Joi.number().required().min(1).max(20),
-        checkInDate: Joi.date().required().min('now'),
+        checkInDate: Joi.date().required().min(new Date().toISOString().split('T')[0]),
         checkOutDate: Joi.date().required().greater(Joi.ref('checkInDate')),
         paymentMode: Joi.string().valid('Cash', 'Card', 'UPI').default('Cash'),
         totalAmount: Joi.number().required().min(0)

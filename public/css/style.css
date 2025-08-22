@@ -958,3 +958,8 @@ cursor: pointer;
     }
 }
 
+.close{
+    position: relative;
+    top: 3.5rem;
+    right: 10rem;
+}
