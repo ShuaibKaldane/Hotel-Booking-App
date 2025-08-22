@@ -11,10 +11,13 @@
        
       </div>
       
-      <!-- Centered Search Form -->
+      <!-- Centered Search Form with Auto-suggestions -->
       <div class="navbar-nav mx-auto d-flex align-items-center">
-        <form class="d-flex align-items-center">
-          <input class="form-control me-2 w-auto" type="search" placeholder="Search destinations..." aria-label="Search" style="min-width: 300px;">
+        <form class="d-flex align-items-center" method="GET" action="/search">
+          <div class="search-container">
+            <input class="form-control me-2 w-auto" type="search" name="query" placeholder="Search destinations..." aria-label="Search" style="min-width: 300px;" autocomplete="off">
+            <div id="suggestions-dropdown" class="suggestions-dropdown"></div>
+          </div>
           <button class="search" type="submit">Search <i class="fa-solid fa-magnifying-glass"></i></button>
         </form>
       </div>

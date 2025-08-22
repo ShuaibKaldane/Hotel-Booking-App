@@ -1,5 +1,22 @@
 <% layout('/layouts/boilerplate.ejs') -%>
 <body>
+    <% if (typeof isSearchResult !== 'undefined' && isSearchResult) { %>
+        <div class="container mt-3">
+            <div class="alert alert-info" role="alert">
+                <% if (alldata.length > 0) { %>
+                    <% if (typeof exactMatchCount !== 'undefined' && exactMatchCount > 0) { %>
+                        Found <%= exactMatchCount %> exact match(es) and <%= alldata.length - exactMatchCount %> related result(s) for "<%= searchQuery %>"
+                        <small class="d-block mt-1 text-muted">Exact matches are shown first</small>
+                    <% } else { %>
+                        Found <%= alldata.length %> result(s) for "<%= searchQuery %>"
+                    <% } %>
+                <% } else { %>
+                    No results found for "<%= searchQuery %>". <a href="/alllist">View all listings</a>
+                <% } %>
+            </div>
+        </div>
+    <% } %>
+    
     <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
         <% for(let i of alldata) {%>
     <div class="card">
@@ -14,6 +31,5 @@
  <% } %>
     </div>
     <br>
-    <br>
-    
+    <br> 
 </body>

@@ -15,6 +15,8 @@ const {read} = require("../controllers/Listening.js");
 const {update} = require("../controllers/Listening.js");
 const {updatesave} = require("../controllers/Listening.js");
 const {destroy} = require("../controllers/Listening.js");
+const {search} = require("../controllers/Listening.js");
+const {autoSuggestions} = require("../controllers/Listening.js");
 const multer  = require('multer')
 const {storage} = require("../CloudConfig.js");
 const upload = multer({storage});
@@ -46,8 +48,6 @@ router.route("/listing/new")
 // Normal way 
 router.post("/listening/response",isLogedin, validate,upload.single('listing[image]'), WrapAsync  (saveCreate));
 
-
-
 // Read Route
 router.get("/listing/:id", WrapAsync(read));
 
@@ -58,5 +58,11 @@ router.put("/listing/:id",isLogedin,isOwner,  validate,  wrapAsync(updatesave));
 
 // Delete Route
 router.delete("/listing/:id",isLogedin, isOwner , wrapAsync(destroy));
+
+// Auto-suggestions Route
+router.get("/api/suggestions", wrapAsync(autoSuggestions));
+
+// Search Route
+router.get("/search", wrapAsync(search));
 
 module.exports = router
