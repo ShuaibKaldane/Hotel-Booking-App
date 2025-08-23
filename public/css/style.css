@@ -865,8 +865,10 @@ cursor: pointer;
 /* Regular nav links (Home, All Listening, Add new Listening) */
 .navbar-nav .nav-link:not([href="/signup"]):not([href="/login"]):not([href="/logout"]) {
     background: transparent;
-    color: #222222 !important;
+    color: #d63384 !important;
     border: 2px solid transparent;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .navbar-nav .nav-link:not([href="/signup"]):not([href="/login"]):not([href="/logout"]):hover {
@@ -874,6 +876,39 @@ cursor: pointer;
     color: #fe424d !important;
     border-color: rgba(254, 66, 77, 0.2);
     transform: translateY(-1px);
+}
+
+.navbar-nav .nav-link.active:not([href="/signup"]):not([href="/login"]):not([href="/logout"]) {
+    color: #fe424d !important;
+    font-weight: 600;
+    background: rgba(254, 66, 77, 0.05);
+    border-radius: 6px;
+}
+
+.navbar-nav .nav-link:not([href="/signup"]):not([href="/login"]):not([href="/logout"]):focus {
+    color: #fe424d !important;
+    outline: 2px solid rgba(254, 66, 77, 0.3);
+    outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+    .navbar-nav .nav-link:not([href="/signup"]):not([href="/login"]):not([href="/logout"]) {
+        color: #dc3545 !important;
+        font-weight: 600;
+        padding: 0.6rem 1rem !important;
+        margin: 0.2rem 0;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-nav .nav-link:not([href="/signup"]):not([href="/login"]):not([href="/logout"]) {
+        color: #c82333 !important;
+        font-weight: 600;
+        padding: 0.5rem 0.8rem !important;
+        font-size: 0.9rem;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
 }
 
 /* Responsive adjustments */
