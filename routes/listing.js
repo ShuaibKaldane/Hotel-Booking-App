@@ -31,10 +31,6 @@ const validate = (req , res , next)=>{
   }
 }
 
-router.get("/", (req , res)=>{
-  res.send("Welcome to the home page")
-})
-
 // Little optimize way of writting
 // Index Route
 router.route("/alllist")
