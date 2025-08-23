@@ -1,36 +1,45 @@
-<nav class="navbar navbar-expand-md navbar-light bg-light border-bottom sticky-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom sticky-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/alllist"><i class="fa-solid fa-recycle"></i></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup">
+    <!-- Brand Logo -->
+    <a class="navbar-brand" href="/alllist">
+      <i class="fa-solid fa-recycle"></i>
+      <span class="brand-text d-none d-sm-inline ms-2">WonderLust</span>
+    </a>
+    
+    <!-- Mobile Toggle Button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+    
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
+      <!-- Left Navigation Links -->
+      <div class="navbar-nav me-auto">
         <a class="nav-link active" aria-current="page" href="/alllist">Home</a>
         <a class="nav-link" href="/alllist">Explore</a>
-       
       </div>
       
       <!-- Centered Search Form with Auto-suggestions -->
-      <div class="navbar-nav mx-auto d-flex align-items-center">
-        <form class="d-flex align-items-center" method="GET" action="/search">
+      <div class="navbar-nav mx-auto d-flex align-items-center search-wrapper">
+        <form class="d-flex align-items-center search-form" method="GET" action="/search">
           <div class="search-container">
-            <input class="form-control me-2 w-auto" type="search" name="query" placeholder="Search destinations..." aria-label="Search" style="min-width: 300px;" autocomplete="off">
+            <input class="form-control search-input" type="search" name="query" placeholder="Search destinations..." aria-label="Search" autocomplete="off">
             <div id="suggestions-dropdown" class="suggestions-dropdown"></div>
           </div>
-          <button class="search" type="submit">Search <i class="fa-solid fa-magnifying-glass"></i></button>
+          <button class="search btn-search" type="submit">
+            <span class="search-text d-none d-md-inline">Search</span>
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
         </form>
       </div>
       
       <!-- Right side navigation -->
-      <div class="navbar-nav ms-auto">
-         <a class="nav-link" href="/listing/new">Rent your Home</a>
+      <div class="navbar-nav ms-auto auth-links">
         <% if(!currUser){ %>
-        <a class="nav-link active" aria-current="page" href="/signup">Signup</a>
-        <a class="nav-link" href="/login">Sign in</a>
+          <a class="nav-link auth-btn signup-btn" href="/signup">Signup</a>
+          <a class="nav-link auth-btn login-btn" href="/login">Sign in</a>
         <% } %>
         <% if(currUser){ %>
-        <a class="nav-link" href="/logout">Logout</a>
+          <a class="nav-link auth-btn logout-btn" href="/logout">Logout</a>
         <% } %>
       </div>
     </div>
